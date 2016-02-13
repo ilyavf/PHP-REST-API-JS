@@ -1,0 +1,44 @@
+/* -------------------------------------------------------------------
+        Basic Initialize
+------------------------------------------------------------------- */
+body {
+    -moz-osx-font-smoothing: auto;
+    -webkit-font-smoothing: subpixel-antialiased;
+}
+::-moz-selection:not(input), ::selection:not(input) {
+    color: inherit;
+    background: transparent;
+}
+img::selection{
+    color: inherit;
+    background: transparent;
+}
+img::-moz-selection {
+    color: inherit;
+    background: transparent;
+}
+img {
+    user-drag: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+}
+button:focus, button:active, input:focus, input:active, a:active, a:focus {
+    outline: 0 !important;
+}
+a {
+    text-decoration: none;
+
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -ms-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+button {
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -ms-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+/* -------------------------------------------------------------------
+        END Basic Initialize
+------------------------------------------------------------------- */
