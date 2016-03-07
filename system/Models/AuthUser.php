@@ -8,28 +8,145 @@ class AuthUser {
 
     public function __construct() {}
 
-    public function loadUser($authUser, $newSession = false) {
-        if (AuthUserData::userExistConfirmed($authUser)) {
-            $this->userData = AuthUserData::getUserData($authUser);
-            $this->getUserRoles();
-            $this->getUserSessions();
+    public function createUser($authUser, $authEmail, $authPass, $authQuestion, $authAnswer, $extraKey) {
+        $emailExists = AuthUserData::emailExist($authEmail);
+        $userExists = AuthUserData::userExist($authUser);
 
-            if ($newSession) {
-                return $this->initiateConnection();
+        if ($userExists && $emailExists && $extraKey != '') {
+            $this->loadUser($authUser);
+
+            if ($this->checkKey($extraKey, 'SignUp')) {
+                AuthUserData::clearExtraKey($this->userData['userID']);
+                return false;
+            }
+            if ($this->userData['password'] != $authPass || $this->userData['securityQuestion'] != $authQuestion || $this->userData['securityAnswer'] != $authAnswer) {
+                AuthUserData::clearExtraKey($this->userData['userID']);
+                return false;
             }
 
-            return $this->findCurrentSession();
+            $this->createAndUpdatePassword($authPass);
+            AuthUserData::clearExtraKey($this->userData['userID']);
+            AuthUserData::confirmEmail($this->userData['userID']);
+
+            return true;
+        } else if (!$userExists && !$emailExists && $extraKey == '') {
+            $newExtraKey = $this->createPin(_PIN_SIGN_UP_PLUS_CHARS_);
+            $salt = bin2hex(mcrypt_create_iv(_PASSWORD_SALT_IV_SIZE_, MCRYPT_DEV_URANDOM));
+            $userID = AuthUserData::addNewUser($authUser, $authEmail, $authPass, $salt, $authQuestion, $authAnswer);
+            $this->loadUserForced($authUser);
+            AuthUserData::addUserRole($userID, 'Admin');
+            AuthUserData::updateExtraKey($userID, $newExtraKey, 'SignUp');
+            header('Auth-Second-Factor: true');
+            $this->sendEmailNotification('SignUp', Array(Array('{{PIN}}'), Array(strtoupper($newExtraKey))));
+
+            return true;
+        }
+        return false;
+    }
+
+    public function forgotPassword($userOrEmail, $secondFactor, $answer, $newPassword) {
+        if (AuthUserData::emailExist($userOrEmail)) {
+            $userAuth = AuthUserData::getUserByEmail($userOrEmail);
+            $this->loadUserForced($userAuth);
+        } else if (AuthUserData::userExist($userOrEmail)) {
+            $userAuth = $userOrEmail;
+            $this->loadUserForced($userAuth);
+        } else {
+            return Array("continue" => false);
+        }
+
+        if ($secondFactor != '') {
+            if ($this->checkKey($_POST['secondFactor'], 'forgotPassword')) {
+                if ($answer != '') {
+                    if ($answer == $this->userData['securityAnswer']) {
+                        if ($newPassword != '' && $newPassword != hash('sha512', '')) {
+                            $this->createAndUpdatePassword($newPassword);
+                            AuthUserData::clearExtraKey($this->userData['userID']);
+                            return Array("continue" => true, "flowDone" => true);
+                        } else {
+                            return Array("continue" => true, "askForNewPassword" => true);
+                        }
+                    }
+                } else {
+                    return Array("continue" => true, "question" => $this->userData['securityQuestion']);
+                }
+            } else {
+                AuthUserData::clearExtraKey($this->userData['userID']);
+            }
+        } else {
+            $newExtraKey = $this->createPin(_PIN_FORGOT_PASSWORD_PLUS_CHARS_);
+            AuthUserData::updateExtraKey($this->userData['userID'], $newExtraKey, 'forgotPassword');
+            $this->sendNotification('ForgotPassword', Array(Array('{{PIN}}'), Array($newExtraKey)));
+            return Array("continue" => true, "secondFactor" => true);
+        }
+        return Array("continue" => false);
+    }
+
+    public function changeLanguage($lang) {
+        AuthUserData::updateLanguage($this->userData['userID'], $lang);
+    }
+
+    public function createAndUpdatePassword($newPassword) {
+        $this->userData['salt'] = bin2hex(mcrypt_create_iv(_PASSWORD_SALT_IV_SIZE_, MCRYPT_DEV_URANDOM));
+        $this->userData['password'] = hash_pbkdf2('sha512', $newPassword, $this->userData['salt'], 1000);
+
+        AuthUserData::updatePasswordAndSalt($this->userData['userID'], $this->userData['password'], $this->userData['salt']);
+    }
+
+    public function checkKey($key, $type) {
+        return ($key == $this->userData['extraKey'] && $this->userData['extraKeyType'] == $type && ($this->userData['extraKeyCreated'] + _SECOND_FACTOR_EXPIRE_SECONDS_) > time());
+    }
+
+    public function loadUser($authUser, $initialize = false) {
+        if (AuthUserData::userExist($authUser)) {
+            $this->loadUserForced($authUser);
+
+            if (AuthUserData::userExistConfirmed($authUser)) {
+                if ($initialize) {
+                    return true;
+                }
+                return $this->findCurrentSession();
+            }
         }
 
         return false;
+    }
+
+    public function loadUserForced($authUser) {
+        $this->userData = AuthUserData::getUserData($authUser);
+        $this->getUserRoles();
+        $this->getUserSessions();
+    }
+
+    public static function createPin($baseLen = 0) {
+        $characters = str_shuffle(_CHARS_FOR_SECOND_FACTOR_KEYS_);
+        $charLen = strlen($characters) - 1;
+        $len = mt_rand($baseLen+_PIN_LOWEST_NUMBER_OF_CHARS_, $baseLen+_PIN_HIGH_RANGE_NUMBER_OF_CHARS_);
+
+        $string = '';
+        for ($i = 0; $i < $len; $i++) $string .= $characters[mt_rand(0, $charLen)];
+        return $string;
+    }
+
+    public function getChallengeKey() {
+        if ($this->userData['extraKeyType'] == 'challenge') {
+            // resets keys so this challenge cannot be retested
+            AuthUserData::clearExtraKey($this->userData['userID']);
+            return $this->userData['extraKey'];
+        }
+        return null;
     }
 
     public function getUserData() {
         return $this->userData;
     }
 
-    public function getUserLoginSecret() {
+    public function getUserPassword() {
         return $this->userData['password'];
+    }
+
+    public function getSalt() {
+        return $this->userData['salt'];
     }
 
     public function getUserSecret() {
@@ -68,116 +185,103 @@ class AuthUser {
         return false;
     }
 
-    public function createNewSession($mySecret) {
-        $this->activeSessionSecret = $mySecret;
+    public function createNewSession($createdSecret) {
+        $this->activeSessionSecret = $createdSecret;
         $hashData = $this->makeSessionUserInfoHash();
-        return AuthUserData::addNewSession($this->userData['userID'], $mySecret, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT'], $hashData);
+        return AuthUserData::addNewSession($this->userData['userID'], $createdSecret, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT'], $hashData);
     }
 
-    public function hasSecondFactor() {
-        return false;
-        //return (isset($this->userData->twoFactorType) && $this->userData->twoFactorType != _TWO_FACTOR_TYPE_NONE_ && $this->userData->lastActivity < strtotime("-" . _TIME_TO_LIVE_IN_MINUTES_ . " minute", time()));
+    public function sendEmailNotification($type, $extraVariables = null) {
+        $emailTemplate = new EmailTemplates(Array($this->userData['email']), $type, $this->userData['baseLang']);
+        $emailTemplate->addVariables($extraVariables);
+        if (!$emailTemplate->send()) {
+             // todo: add some sort of error checking/recording.
+        }
+    }
+
+    public function sendSMSNotification($type, $extraVariables = null) {
+        // todo: add stuff for SMS messaging
+    }
+
+    public function sendAllNotification($type, $extraVariables = null) {
+        $this->sendEmailNotification($type, $extraVariables);
+        $this->sendSMSNotification($type, $extraVariables);
+    }
+
+    public function sendNotification($type, $extraVariables = null) {
+        if ($this->userData['twoFactorType'] == TwoFactor::Email) {
+            $this->sendEmailNotification($type, $extraVariables);
+        } elseif ($this->userData['twoFactorType'] == TwoFactor::SMS) {
+            $this->sendSMSNotification($type, $extraVariables);
+        }
+    }
+
+    public function askClientChallenge() {
+        $challengePin = $this->createPin(30);
+        AuthUserData::updateExtraKey($this->userData['userID'], $challengePin, 'challenge');
+        header('Auth-Challenge: ' . $challengePin);
+        header('Auth-Salt: ' . $this->userData['salt']);
     }
 
     public function initiateConnection() {
-        $headers = getallheaders();
-        $headers['Auth-User'];
+        $createdSecret = $this->createNewSecret();
 
-        if (!$this->findCurrentSession()) {
-            $createdSecret = base64_encode(hash('sha512', uniqid()));
-            header('Auth-Secret: ' . $createdSecret);
-
-            // todo: if 2nd factor
-            if (false) {
-                $secondFactor = '35356';
-                $createSecret = base64_encode(hash_hmac('sha512', $createdSecret, $secondFactor, true));
-                //todo: this new signature is stored as the new secret (the server should use the 2nd factor number the same way
-            }
-
-            $this->createNewSession($createdSecret);
-        } else {
-            $existingSecret = $this->activeSessionSecret;
-            header('Auth-Secret: ' . $existingSecret);
+        if ($this->userData['twoFactorType'] != TwoFactor::None) {
+            $secondFactor = $this->createPin();
+            header('Auth-Second-Factor: true');
+            $createdSecret = base64_encode(hash_hmac('sha512', $createdSecret, $secondFactor, true));
+            $this->sendNotification('Login2f', Array(Array('{{PIN}}'), Array($secondFactor)));
         }
 
-        // todo: email or sms (depending on user settings) the 2nd factor
-        // todo: add Secret Header (even if there is no 2nd factor
+        $this->createNewSession($createdSecret);
         return true;
+    }
+
+    public function createNewSecret() {
+        AuthUserData::clearExtraKey($this->userData['userID']);
+        $createdSecret = base64_encode(hash('sha512', sha1(microtime(true).mt_rand(10000,90000))));
+        header('Auth-Secret: ' . $createdSecret);
+        return $createdSecret;
+    }
+
+    public function notifyOnFailedLogin() {
+        if ($this->userData['failedLoginCount'] >= _LOGIN_FAILED_COUNT_BEFORE_NOTIFICATION_) {
+            AuthUserData::resetFailedLogin($this->userData['userID']);
+            if ($this->userData['failedLoginTime'] + _LOGIN_FAILED_TIME_BEFORE_RESET_COUNT_SECONDS_ > time()) {
+                $this->sendAllNotification('LoginFailed');
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public function addFailedLogin() {
+        if (!$this->notifyOnFailedLogin()) {
+            if ((is_null($this->userData['failedLoginCount']) && is_null($this->userData['failedLoginTime'])) || $this->userData['failedLoginTime'] + _LOGIN_FAILED_TIME_BEFORE_RESET_COUNT_SECONDS_ < time()) {
+                AuthUserData::updateFailedLogin($this->userData['userID'], 1, time());
+            } else {
+                AuthUserData::updateFailedLogin($this->userData['userID'], ($this->userData['failedLoginCount'] + 1), $this->userData['failedLoginTime']);
+            }
+        }
+    }
+
+    public function makeSuccessfulLogin($initialize = false) {
+        if ($initialize) $this->addSuccessfulIP();
+        AuthUserData::resetFailedLogin($this->userData['userID']);
+    }
+
+    public function addSuccessfulIP() {
+        AuthUserData::addSuccessfulIP($this->userData['userID'], $_SERVER['REMOTE_ADDR']);
     }
 
     public function makeSessionUserInfoHash() {
         $data = $_SERVER['HTTP_ACCEPT']
-            . $_SERVER['HTTP_ACCEPT_ENCODING']
             . $_SERVER['HTTP_ACCEPT']
             . $_SERVER['HTTP_ACCEPT_LANGUAGE']
             . $_SERVER['SERVER_PROTOCOL']
             . $_SERVER['HTTP_ACCEPT_CHARSET']
             . $_SERVER['REMOTE_HOST'];
 
-        return $data;
-    }
-}
-
-class AuthUserData {
-    public static function getUserData($authUser) {
-        $query = MySQL::getInstance()->prepare("SELECT * FROM AuthUser WHERE userName=:userName AND (emailConfirmed=1 OR phoneConfirmed=1)");
-        $query->bindValue(':userName', $authUser);
-        $query->execute();
-        return $query->fetch(PDO::FETCH_ASSOC);
-    }
-
-    public static function userExistConfirmed($authUser) {
-        $query = MySQL::getInstance()->prepare("SELECT COUNT(userName) AS count FROM AuthUser WHERE userName=:userName" . (_MANDATORY_EMAIL_CONFIRMATION_ || _MANDATORY_PHONE_CONFIRMATION_ ? (_MANDATORY_EMAIL_CONFIRMATION_ && _MANDATORY_PHONE_CONFIRMATION_ ? " AND emailConfirmed=1 AND phoneConfirmed=1" : " AND (emailConfirmed=1 OR phoneConfirmed=1)") : ""));
-        $query->bindValue(':userName', $authUser);
-        $query->execute();
-        $temp = $query->fetch(PDO::FETCH_ASSOC);
-        return ($temp['count'] == 1);
-    }
-
-    public static function getUserRoles($userID) {
-        $query = MySQL::getInstance()->prepare("SELECT userRole FROM AuthUserRoles WHERE userID=:userID");
-        $query->bindValue(':userID', $userID);
-        $query->execute();
-        return $query->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public static function getUserSessions($userID) {
-        $query = MySQL::getInstance()->prepare("SELECT * FROM AuthUserSessions WHERE userID=:userID");
-        $query->bindValue(':userID', $userID);
-        $query->execute();
-        return $query->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public static function delExpiredSessions($userID) {
-        $query = MySQL::getInstance()->prepare("DELETE FROM AuthUserSessions WHERE userID=:userID AND NOW() >= DATE_ADD(sessionLastActive, INTERVAL :seconds SECOND)");
-        $query->bindValue(':userID', $userID);
-        $query->bindValue(':seconds', _SESSION_EXPIRE_SECONDS_);
-        $query->execute();
-    }
-
-    public static function userNameExists($authUser) {
-        $query = MySQL::getInstance()->prepare("SELECT COUNT(userName) AS count FROM AuthUser WHERE userName=:userName");
-        $query->bindValue(':userName', $authUser);
-        $query->execute();
-        $temp = $query->fetch(PDO::FETCH_ASSOC);
-        return ($temp['count'] == 1);
-    }
-
-    public static function addNewSession($userID, $sessionSecret, $sessionIP, $sessionUserAgent, $sessionUserInfoHash) {
-        $query = MySQL::getInstance()->prepare("INSERT INTO AuthUserSessions (userID, sessionSecret, sessionIP, sessionUserAgent, sessionUserInfoHash, sessionLastActive) VALUES (:userID, :sessionSecret, :sessionIP, :sessionUserAgent, :sessionUserInfoHash, FROM_UNIXTIME(:sessionLastActive))");
-        $query->bindValue(':userID', $userID);
-        $query->bindValue(':sessionSecret', $sessionSecret);
-        $query->bindValue(':sessionIP', $sessionIP);
-        $query->bindValue(':sessionUserAgent', $sessionUserAgent);
-        $query->bindValue(':sessionUserInfoHash', $sessionUserInfoHash);
-        $query->bindValue(':sessionLastActive', time());
-        return $query->execute();
-    }
-
-    public static function updateSessionActivity($sessionID) {
-        $query = MySQL::getInstance()->prepare("UPDATE AuthUserSessions SET sessionLastActive=FROM_UNIXTIME(:sessionLastActive) WHERE sessionID=:sessionID");
-        $query->bindValue(':sessionLastActive', time());
-        $query->bindValue(':sessionID', $sessionID);
-        return $query->execute();
+        return hash('sha1', $data);
     }
 }

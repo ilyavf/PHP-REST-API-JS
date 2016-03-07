@@ -1,7 +1,7 @@
 <?php
 
 class InitiateConnection extends BaseAPIController {
-    function get_xhr() {
+    function post_xhr() {
         if ($this->checkAuth()) {
             echo json_encode(StatusReturn::S200());
         }

@@ -56,7 +56,26 @@ class BaseAPIController {
     }
 
     public function checkAuth() {
+        if (_ALLOW_CORS_) {
+            $this->getCorsHeaders();
+        }
         if (!$this->authPassed) echo json_encode(StatusReturn::E401('401 Not Authorized!'));
         return $this->authPassed;
+    }
+
+    function options() {
+        if (_ALLOW_CORS_) {
+            $this->getCorsHeaders();
+            echo json_encode(StatusReturn::S200('All Clear'));
+        } else {
+            echo json_encode(StatusReturn::E404());
+        }
+    }
+
+    function getCorsHeaders() {
+        header("Access-Control-Allow-Origin: *");
+        header("Access-Control-Allow-Headers: Auth-Signature, Auth-User, Auth-Timestamp, X-Requested-With");
+        header("Access-Control-Expose-Headers: Auth-Second-Factor, Auth-Secret, Auth-Challenge, Auth-Salt");
+        header("Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS");
     }
 }
