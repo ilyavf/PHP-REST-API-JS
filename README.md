@@ -1,16 +1,18 @@
 # PHP-REST-API-JS
 Attempt at making a RESTful API in PHP and a JS client for it.
 
+PHP Version 5.6.18+ Required
+
 #### Details So Far
 This is my attempt at making a RESTFul API Server (kinda using MVC with routing) and a client side Javascript to communicate with the server as securely as possible (however SSL is still recommended).
 
-The server servers a single page application. The server is a fully restful API and capable of CORS.
+The server serves a single page application. The server is a fully restful API and capable of CORS.
 
 I used a mix of OAuth and HMAC for the API communication. Please let me know if you see any problems with it. Details Below:
 
 Options are in the constants.php file.
 
-This project is still in development, a lot of clean up could be done such as commenting, using node and composer for libraries, and PHP Documentation.
+This project is still in development, a lot of clean up could be done such as commenting, using node and composer for libraries, and PHP Documentation. Also, you could make the PHP functions backwards compatible to a lower version.
 
 I made this because there were so few libraries that worked well between server and client, and also, didn't want to use standard OAuth.
 
