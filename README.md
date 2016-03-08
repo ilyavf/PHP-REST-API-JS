@@ -16,7 +16,7 @@ This project is still in development, a lot of clean up could be done such as co
 
 I made this because there were so few libraries that worked well between server and client, and also, didn't want to use standard OAuth.
 
-### Security and Process Flows
+## Security and Process Flows
 
 #### Notes:
 - All passwords are hashed SHA512 before transmitting
@@ -61,10 +61,11 @@ A system administrator can make the system go to lockdown. Or lockdown can be se
 #### On lockdown, the following occurs: *Not Completed*
 - All user accounts get notification of logins with a short message explaining why.
 
+**Note:**
 X amount of failed attempts at a login within X amount of time results in a notification being sent to the user recommending they change there username if it wasn't them.
 
 
-##### GNU Lesser General Public License
+## GNU Lesser General Public License
 http://www.gnu.org/copyleft/lesser.html
 
 This program is distributed in the hope that it will be useful - WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
