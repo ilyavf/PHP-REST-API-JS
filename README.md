@@ -2,10 +2,17 @@
 Attempt at making a RESTful API in PHP and a JS client for it.
 
 #### Details So Far
-This is my attempt at making a RESTFul API Server (kinda using MVC with routing) and a client side Javascript to communicate with the server as securly as possible (however SSL is still recommended).
+This is my attempt at making a RESTFul API Server (kinda using MVC with routing) and a client side Javascript to communicate with the server as securely as possible (however SSL is still recommended).
 
-I used a mix of OAuth and HMAC for the API communication. Please let me know if you see any problems with it.
+The server servers a single page application. The server is a fully restful API and capable of CORS.
 
+I used a mix of OAuth and HMAC for the API communication. Please let me know if you see any problems with it. Details Below:
+
+Options are in the constants.php file.
+
+This project is still in development, a lot of clean up could be done such as commenting, using node and composer for libraries, and PHP Documentation.
+
+I made this because there were so few libraries that worked well between server and client, and also, didn't want to use standard OAuth.
 
 ### Security and Process Flows
 
@@ -30,7 +37,7 @@ I used a mix of OAuth and HMAC for the API communication. Please let me know if 
 - Non login Server communications compares signed requests by resigning the same information (Method, Timestamp, Data, Endpoint) and comparing the two signatures
 
 #### Sign-Up Flow:
-- Ask for unique username (a-z 0-9 _ -){8+}, unique email, select security question and answer {6+} and strong password (At least one symbol, one capital, one lowercase, and one number){12+}.
+- Ask for unique username (a-z 0-9 _ -){8+}, unique email, select security question and answer {6+} and strong password (At least one symbol, one capital, one lowercase, and one number){12+} (Passwords are not enforced, user can use a single space, but we notify them of the password strength).
 - Send this information to the server, server checks everything but password strength (its already hashed), then sends a 2nd factor email.
 - User enters 2nd factor (this one is communicated to the server) and server finishes sign up process and opens the login dialog.
 
@@ -58,3 +65,5 @@ X amount of failed attempts at a login within X amount of time results in a noti
 
 ##### GNU Lesser General Public License
 http://www.gnu.org/copyleft/lesser.html
+
+This program is distributed in the hope that it will be useful - WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
