@@ -58,8 +58,7 @@ I made this because there were so few libraries that worked well between server 
 
 A system administrator can make the system go to lockdown. Or lockdown can be set automatic if login failures or email/username exists requests exceed the average load by X times for longer than X min.
 
-#### On lockdown, the following occurs:
-- SignUp no longer tells users if the username or email is available (the server will reject signup).
+#### On lockdown, the following occurs: *Not Completed*
 - All user accounts get notification of logins with a short message explaining why.
 
 X amount of failed attempts at a login within X amount of time results in a notification being sent to the user recommending they change there username if it wasn't them.
