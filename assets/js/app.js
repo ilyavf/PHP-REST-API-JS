@@ -1,26 +1,24 @@
 requirejs.config({
   baseUrl: 'assets/js',
   "paths": {
-    "jquery": "../lib/jquery/jquery-2.1.4.min",
-    "can": "../lib/canjs/can",
-    "cookies": "../lib/jscookie/js.cookie",
-    "bootstrap": "../lib/bootstrap/js/bootstrap",
-    "bootstrap-select": "../lib/bootstrap-select/js/bootstrap-select",
-    "pace": "../lib/pace/pace.min",
-    "i18n": "../lib/i18n/i18n",
-    "data-tables": "../lib/data-tables/datatables",
-    "morris": "../lib/morrisjs/morris",
-    "raphael": "../lib/raphael/raphael",
-    "gragula": "../lib/dragula/dragula",
-    "detect-mobile": "../lib/detectmobile/detectmobilebrowser",
-    "text": "../lib/text/text",
-    "rest-api": "../lib/rest-api-js/restfulapi",
-    "cryptojs.core": "../lib/rest-api-js/core",
-    "cryptojs.x64": "../lib/rest-api-js/x64-core",
-    "cryptojs.sha512": "../lib/rest-api-js/sha512",
-    "cryptojs.base64": "../lib/rest-api-js/enc-base64",
-    "cryptojs.hmac": "../lib/rest-api-js/hmac",
-    "cryptojs.pbkdf2": "../lib/rest-api-js/pbkdf2"
+    "jquery": "../../node_modules/jquery/dist/jquery",
+    "bootstrap": "../../node_modules/bootstrap/dist/js/bootstrap",
+    "bootstrap-select": "../../node_modules/bootstrap-select/dist/js/bootstrap-select",
+    "pace": "../../node_modules/pace/pace",
+
+    "can": "../../node_modules/canjs/can",
+    "i18n": "../../node_modules/i18n/i18n",
+    "text": "../../node_modules/text/text",
+
+    "detect-mobile": "detectmobilebrowser",
+    "rest-api": "restfulapi",
+
+    "cryptojs.core": "../../node_modules/cryptojslib/components/core",
+    "cryptojs.x64": "../../node_modules/cryptojslib/components/x64-core",
+    "cryptojs.sha512": "../../node_modules/cryptojslib/components/sha512",
+    "cryptojs.base64": "../../node_modules/cryptojslib/components/enc-base64",
+    "cryptojs.hmac": "../../node_modules/cryptojslib/components/hmac",
+    "cryptojs.pbkdf2": "../../node_modules/cryptojslib/components/pbkdf2"
   },
   "shim": {
     "bootstrap": {

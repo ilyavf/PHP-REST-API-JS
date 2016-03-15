@@ -1,3 +1,4 @@
 /.idea
 /composer.lock
 /system/Libraries
+/node_modules
