@@ -15,7 +15,7 @@ error_reporting(E_ERROR);
 date_default_timezone_set('UTC');
 
 /* LIBRARIES */
-require_once('system/Libraries/PHPMailer/PHPMailerAutoload.php');
+require_once('system/Libraries/autoload.php');
 
 /* SYSTEM */
 require_once('system/Constants.php');

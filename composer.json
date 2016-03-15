@@ -1,0 +1,12 @@
+{
+  "name": "RapidDevGroup/PHP-REST-API-JS",
+  "description": "RESTful API in PHP and a JS client with basic SPA start",
+  "version": "0.1.0",
+  "require": {
+    "php": ">=5.6.0",
+    "phpmailer/phpmailer": "~5.2"
+  },
+  "config": {
+    "vendor-dir": "system/Libraries"
+  }
+}
