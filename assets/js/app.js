@@ -9,7 +9,8 @@ import $ from 'jquery';
 import can from 'can';
 import pace from 'pace';
 import restAPI from 'rest-api';
-import loginModal from 'components/loginModal';
+import 'components/login-component/';
+import loginModalVM from 'components/login-component/view-model';
 import singUpModal from 'components/signUpModal';
 import forgotPasswordModal from 'components/forgotPasswordModal';
 import settingsModal from 'components/settingsModal';
@@ -19,7 +20,7 @@ import 'bootstrap';
   $(function () {
     pace.start({ajax: false});
 
-    var loginValues = new can.Map(loginModal);
+    var loginValues = new loginModalVM;
     var singUpValues = new can.Map(singUpModal);
     var forgotPasswordValues = new can.Map(forgotPasswordModal);
     var settingsValues = new can.Map(settingsModal);
@@ -35,7 +36,7 @@ import 'bootstrap';
       });
 
     var $modals = $('#spa-app-modals');
-    $modals.append(can.view('assets/js/templates/loginModal.stache', new can.Map(loginValues)));
+    $modals.append(can.view.stache('<login-component></login-component>'));
     $modals.append(can.view('assets/js/templates/signUpModal.stache', singUpValues));
     $modals.append(can.view('assets/js/templates/forgotPasswordModal.stache', forgotPasswordValues));
     $modals.append(can.view('assets/js/templates/settingsModal.stache', settingsValues));

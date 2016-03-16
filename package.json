@@ -37,7 +37,8 @@
       "components/*": "assets/js/components/*.js",
       "rest-api": "assets/js/restfulapi.js",
       "i18n-nls/main": "assets/js/nls/main.js",
-      "config": "assets/js/config.js"
+      "config": "assets/js/config.js",
+      "bootstrap.css": "node_modules/bootstrap/dist/css/bootstrap.css"
     },
     "map": {
       "cryptojs.core": "cryptojslib/components/core",

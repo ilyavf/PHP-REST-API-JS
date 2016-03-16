@@ -1,5 +1,5 @@
 <!-- Login Modal -->
-<div id="login-modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="myLoginModal" data-backdrop="static">
+<div id="login-modal" class="modal {{#if isShown}}visible{{/if}}" tabindex="-1" role="dialog" aria-labelledby="myLoginModal" data-backdrop="static">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 			<div class="modal-header">
