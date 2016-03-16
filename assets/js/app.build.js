@@ -6,7 +6,7 @@
         "bootstrap-select": "../../node_modules/bootstrap-select/dist/js/bootstrap-select",
         "pace": "../../node_modules/pace/pace",
 
-        "can": "../../node_modules/canjs/can",
+        "can": "../../node_modules/canjs/dist/amd/can",
         "i18n": "../../node_modules/i18n/i18n",
         "text": "../../node_modules/text/text",
 

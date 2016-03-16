@@ -9,14 +9,15 @@
     "canjs": "^2.2.0",
     "cryptojslib": "git+https://github.com/rapidDevGroup/CryptoJS.git",
     "font-awesome": "^4.5.0",
-    "i18n": "git+https://github.com/requirejs/i18n.git",
     "jquery": "^2.2.1",
     "pace": "git+https://github.com/HubSpot/pace.git",
     "requirejs": "^2.1.22",
-    "requirejs-text": "^2.0.12",
-    "text": "git+https://github.com/requirejs/text.git"
+    "text": "git+https://github.com/requirejs/text.git",
+    "i18n": "git+https://github.com/requirejs/i18n.git"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "http-server": "^0.9.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

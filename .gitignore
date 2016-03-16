@@ -2,3 +2,4 @@
 /composer.lock
 /system/Libraries
 /node_modules
+/assets/js/app-built.js

@@ -6,7 +6,7 @@ requirejs.config({
     "bootstrap-select": "../../node_modules/bootstrap-select/dist/js/bootstrap-select",
     "pace": "../../node_modules/pace/pace",
 
-    "can": "../../node_modules/canjs/can",
+    "can": "../../node_modules/canjs/dist/amd/can",
     "i18n": "../../node_modules/i18n/i18n",
     "text": "../../node_modules/text/text",
 
@@ -63,7 +63,7 @@ requirejs.config({
     }
   }
 });
-require(['config', 'jquery', 'can', 'pace', 'rest-api', 'components/loginModal', 'components/signUpModal', 'components/forgotPasswordModal', 'components/settingsModal', 'bootstrap-select', 'can/view/stache', 'can/map'], function (config, $, can, pace, restAPI, loginModal, singUpModal, forgotPasswordModal, settingsModal) {
+require(['config', 'jquery', 'can', 'pace', 'rest-api', 'components/loginModal', 'components/signUpModal', 'components/forgotPasswordModal', 'components/settingsModal', 'bootstrap-select', 'can/view', 'can/map'], function (config, $, can, pace, restAPI, loginModal, singUpModal, forgotPasswordModal, settingsModal) {
   'use strict';
 
   $(function () {
