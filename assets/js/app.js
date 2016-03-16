@@ -1,9 +1,20 @@
-define(['config', 'jquery', 'can', 'pace', 'rest-api',
-  'components/loginModal', 'components/signUpModal', 'components/forgotPasswordModal', 'components/settingsModal',
-  'bootstrap-select',
-  'bootstrap'
-], function (config, $, can, pace, restAPI, loginModal, singUpModal, forgotPasswordModal, settingsModal) {
+//define(['config', 'jquery', 'can', 'pace', 'rest-api',
+//  'components/loginModal', 'components/signUpModal', 'components/forgotPasswordModal', 'components/settingsModal',
+//  'bootstrap-select',
+//  'bootstrap'
+//], function (config, $, can, pace, restAPI, loginModal, singUpModal, forgotPasswordModal, settingsModal) {
 
+import config from 'config';
+import $ from 'jquery';
+import can from 'can';
+import pace from 'pace';
+import restAPI from 'rest-api';
+import loginModal from 'components/loginModal';
+import singUpModal from 'components/signUpModal';
+import forgotPasswordModal from 'components/forgotPasswordModal';
+import settingsModal from 'components/settingsModal';
+import 'bootstrap-select';
+import 'bootstrap';
 
   $(function () {
     pace.start({ajax: false});
@@ -33,4 +44,5 @@ define(['config', 'jquery', 'can', 'pace', 'rest-api',
 
     $('.selectpicker').selectpicker({style: 'btn-form btn-sm'});
   });
-});
+
+//});
