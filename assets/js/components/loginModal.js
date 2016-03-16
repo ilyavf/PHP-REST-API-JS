@@ -1,5 +1,6 @@
-define(['config', 'i18n!nls/main', 'components/languageSelect', 'rest-api'], function(config, i18n, langSel, restAPI) {
+define(['config', 'i18n-nls/main', 'components/languageSelect', 'rest-api'], function(config, i18n, langSel, restAPI) {
 
+  console.log('i18n',i18n);
   return {
     notLoggedIn: null,
     lang: langSel,

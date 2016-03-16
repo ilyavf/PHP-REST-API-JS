@@ -1,2 +1,2 @@
-{{> templates/topNav.stache}}
-{{> templates/bottomNav.stache}}
+{{> /assets/js/templates/topNav.stache}}
+{{> /assets/js/templates/bottomNav.stache}}

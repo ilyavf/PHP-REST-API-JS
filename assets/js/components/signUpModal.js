@@ -1,4 +1,4 @@
-define(['config', 'i18n!nls/main', 'rest-api'], function(config, i18n, restAPI) {
+define(['config', 'i18n-nls/main', 'rest-api'], function(config, i18n, restAPI) {
 
   return {
     i18n: i18n,

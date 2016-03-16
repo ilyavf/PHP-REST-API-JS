@@ -1,5 +1,5 @@
 define({
-  "root": {
+  //"root": {
     selectLanguage: "Select Language",
     userSettings: "User Settings",
     brandWord: "Company Name",
@@ -48,6 +48,6 @@ define({
     changeLanguage: "Change Language Preference",
     saveSettings: "Save Settings",
     emailSecondFactor: "Email me a login code as my 2nd Factor Authentication"
-  },
-  "fr": true
+  //},
+  //"fr": true
 });

@@ -1,4 +1,4 @@
-define(['config', 'i18n!nls/main', 'rest-api'], function(config, i18n, restAPI) {
+define(['config', 'i18n-nls/main', 'rest-api'], function(config, i18n, restAPI) {
 
   var index2Move;
   for (var i = 0; i < config.languages.length; i ++) {
