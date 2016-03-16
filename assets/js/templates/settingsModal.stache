@@ -17,7 +17,7 @@
                 </div>
                 <div class="form-group">
                     <label for="settings_new_language">{{i18n.changeLanguage}}</label>
-                    <select id="settings_new_language" {($value)}=“newLanguage” {{inputDisabled}} class="selectpicker form-control">
+                    <select id="settings_new_language" {($value)}="newLanguage" {{inputDisabled}} class="selectpicker form-control">
                         {{#each languages}}
                             <option value="{{code}}" {{#if selected}}selected{{/if}}>{{name}}</option>
                         {{/each}}
@@ -25,7 +25,7 @@
                 </div>
                 <div class="form-group">
                     <label for="security_question_create">{{i18n.changeSecurityQuestion}}</label>
-                    <select id="security_question_create" {($value)}=“securityQuestionCreate” {{inputDisabled}} class="selectpicker form-control" title="{{i18n.noNewSecurityQuestion}}">
+                    <select id="security_question_create" {($value)}="securityQuestionCreate" {{inputDisabled}} class="selectpicker form-control" title="{{i18n.noNewSecurityQuestion}}">
                         <option value="{{i18n.securityQuestion1}}">{{i18n.securityQuestion1}}</option>
                         <option value="{{i18n.securityQuestion2}}">{{i18n.securityQuestion2}}</option>
                         <option value="{{i18n.securityQuestion3}}">{{i18n.securityQuestion3}}</option>
@@ -35,21 +35,21 @@
                 </div>
                 <div class="form-group">
                     <label for="security_answer_create">{{i18n.changeSecurityAnswer}}</label>
-                    <input type="text" class="form-control" id="security_answer_create" {($value)}=“securityAnswerCreate” ($blur)="lengthAnswerFunc()" {{inputDisabled}} placeholder="{{i18n.securityAnswer}}" autocomplete="off" />
+                    <input type="text" class="form-control" id="security_answer_create" {($value)}="securityAnswerCreate" ($blur)="lengthAnswerFunc()" {{inputDisabled}} placeholder="{{i18n.securityAnswer}}" autocomplete="off" />
                     {{#if securityAnswerError}}
                         <span class="red-text">{{i18n.securityAnswerLengthError}}</span>
                     {{/if}}
                 </div>
                 <div class="form-group">
                     <label for="password_1_create">{{i18n.nawPassword}}</label>
-                    <input type="password" class="form-control" id="password_1_create" {($value)}=“passwordChange” ($keyup)=“strongPassFunc(@element.val)” {{inputDisabled}} placeholder="{{i18n.nawPassword}}" autocomplete="off" />
+                    <input type="password" class="form-control" id="password_1_create" {($value)}="passwordChange" ($keyup)="strongPassFunc(@element.val)" {{inputDisabled}} placeholder="{{i18n.nawPassword}}" autocomplete="off" />
                     {{#if passwordStrengthText}}
                         <span class="{{passwordStrengthColor}}">{{passwordStrengthText}}</span>
                     {{/if}}
                 </div>
                 <div class="form-group">
                     <label for="password_2_create">{{i18n.retypeNewPassword}}</label>
-                    <input type="password" class="form-control" id="password_2_create" {($value)}=“passwordRetypedChange” ($keyup)="comparePasswordFunc(@element.val)" {{inputDisabled}} placeholder="{{i18n.retypeNewPassword}}" autocomplete="off" />
+                    <input type="password" class="form-control" id="password_2_create" {($value)}="passwordRetypedChange" ($keyup)="comparePasswordFunc(@element.val)" {{inputDisabled}} placeholder="{{i18n.retypeNewPassword}}" autocomplete="off" />
                     {{#if passwordMismatchError}}
                         <span class="red-text">{{i18n.singUpPasswordMismatchError}}</span>
                     {{/if}}

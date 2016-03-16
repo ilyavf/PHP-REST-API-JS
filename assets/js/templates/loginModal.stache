@@ -9,11 +9,11 @@
       <div class="modal-body">
         <div class="form-group">
           <label for="user_login">{{i18n.username}}</label>
-          <input type="text" class="form-control" id="user_login" {($value)}=“userLogin” {{inputDisabled}} placeholder="{{i18n.username}}" autocomplete="off" />
+          <input type="text" class="form-control" id="user_login" {($value)}="userLogin" {{inputDisabled}} placeholder="{{i18n.username}}" autocomplete="off" />
         </div>
         <div class="form-group">
           <label for="password_login">{{i18n.password}}</label>
-          <input type="password" class="form-control" id="password_login" {($value)}=“passwordLogin” ($enter)="loginFunc()" {{inputDisabled}} placeholder="{{i18n.password}}" autocomplete="off" />
+          <input type="password" class="form-control" id="password_login" {($value)}="passwordLogin" ($enter)="loginFunc()" {{inputDisabled}} placeholder="{{i18n.password}}" autocomplete="off" />
         </div>
         <div class="form-group">
           <div class="checkbox">
@@ -26,7 +26,7 @@
         {{#if secondFactorVisible}}
         <div id="ask-for-second-factor" class="form-group">
           <label for="second_factor_login">{{i18n.secondFactor}}</label>
-          <input type="text" class="form-control" id="second_factor_login" {($value)}=“secondFactorLogin” ($enter)="loginFunc()" {{secondFactorDisabled}} placeholder="{{i18n.secondFactor}}" autocomplete="off" />
+          <input type="text" class="form-control" id="second_factor_login" {($value)}="secondFactorLogin" ($enter)="loginFunc()" {{secondFactorDisabled}} placeholder="{{i18n.secondFactor}}" autocomplete="off" />
         </div>
         {{/if}}
         {{#if loginErrorVisible}}

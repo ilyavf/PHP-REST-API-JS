@@ -5,7 +5,7 @@ define(function() {
       {name: "Français", code: "fr"}
     ],
     server: {
-      domain: "http://api.domain.com"
+      domain: "http://edc2.auto-cms.com"
     }
   }
 });

@@ -85,7 +85,7 @@ require(['config', 'jquery', 'can', 'pace', 'rest-api', 'components/loginModal',
       });
 
     var $modals = $('#spa-app-modals');
-    $modals.append(can.view('templates/loginModal.stache', loginValues));
+    $modals.append(can.view('templates/loginModal.stache', new can.Map(loginValues)));
     $modals.append(can.view('templates/signUpModal.stache', singUpValues));
     $modals.append(can.view('templates/forgotPasswordModal.stache', forgotPasswordValues));
     $modals.append(can.view('templates/settingsModal.stache', settingsValues));
